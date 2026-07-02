@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <!-- ==========================
+       1. 雑草除去統合ノード
+       ========================== -->
+  <!-- 俯瞰カメラのみの結果を受けて M5 に送る中枢ノード -->
+  <node name="weeding_recognition3"
+        pkg="crop_recognition2"
+        type="weeding_recognition3_node.py"
+        output="screen" />
+
+  <!-- ==========================
+       2. 俯瞰カメラ認識ノード
+       ========================== -->
+  <!-- top_recognition：/camera1/color/image_raw を見て雑草位置を返す -->
+  <node name="top_recognition"
+        pkg="crop_recognition2"
+        type="top_recognition_node.py"
+        output="screen" />
+
+  <!-- ==========================
+       3. RealSense カメラ 1（俯瞰のみ）
+       ========================== -->
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <arg name="camera" value="camera1"/>
+    <arg name="device_type" value="d435"/>
+    <arg name="serial_no" value="335522071461"/>
+    <arg name="initial_reset" value="false"/>
+    <arg name="enable_sync" value="false"/>
+    <arg name="align_depth" value="true"/>
+    <arg name="enable_color" value="true"/>
+    <arg name="enable_depth" value="true"/>
+    <arg name="enable_confidence" value="false"/>
+
+    <!-- 帯域と処理負荷を抑える設定 -->
+    <arg name="depth_width"  value="640"/>
+    <arg name="depth_height" value="480"/>
+    <arg name="depth_fps"    value="6"/>
+
+    <arg name="color_width"  value="1280"/>
+    <arg name="color_height" value="720"/>
+    <arg name="color_fps"    value="6"/>
+
+    <arg name="wait_for_device_timeout" value="15.0"/>
+  </include>
+
+  <!-- serial_no を文字列として上書き -->
+  <param name="/camera1/realsense2_camera/serial_no"
+         value="335522071461" type="str"/>
+
+  <!-- ==========================
+       4. base_link → camera1_link の TF
+       ========================== -->
+  <node pkg="tf2_ros"
+        type="static_transform_publisher"
+        name="tf2_base_to_cam1_link"
+        args="0 0 0  -0.7071 0 0.7071 0  base_link camera1_link" />
+
+  <!-- ==========================
+       5. 雑草位置可視化ノード
+       ========================== -->
+  <node pkg="crop_recognition2"
+        type="weed_marker_node.py"
+        name="weed_marker_node"
+        output="screen"/>
+
+</launch>
