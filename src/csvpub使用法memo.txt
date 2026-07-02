@@ -1,0 +1,31 @@
+　　　　　　　　　　　　　　　　　　　　　　2024.10.19　
+　　　　　　　　　　　　　　　　　　　　　　agri班　櫻井
+
+　　　　　タスクリスト連続publishプログラム使用法メモ
+　　　　　￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣
+    仕様
+　　　csvpub.py は、１行あたり10個の数値をカンマ区切りで
+　　　記入したテキストファイル（csvファイル）を1行ずつ読み
+　　　込み、std_msgs/Float64MultiArray型でpublishする
+　　　
+　　使用法
+　　　1.csvpub.py  test3.csv を、使用中のrosパッケージ
+　　　　のフォルダにコピー
+　　　　フォルダの例： ~/csvpub_ws/src/cvspub1/scripts/
+　　　
+　　　2.実行権限を付与
+　　　　$ chmod +x csvpub.py
+
+      3.実行例
+　　　　$ rosrun cvspub1 csvpub.py test3.csv
+　　　　または
+　　　　$ python csvpub.py test3.csv
+
+   　　注：このプログラムは約10秒毎にcsv1行分のデータを
+　　　　　publishする。
+　　　　　プログラム13行目 の（ ）内の数値の変更にて
+　　　　　publish間隔を変更可能 である。
+　　　　　　rate = rospy.Rate(0.2)  # 0.1 Hz
+
+　　　以上
+
